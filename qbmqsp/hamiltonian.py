@@ -7,24 +7,25 @@ from pennylane import numpy as np
 class Hamiltonian(object):
     """Representation of a LCU Hamiltonian consisting of Pauli string operators.
         
-        The Hamiltonian must have the form H = \\sum_i θ[i]*h[i], where θ[i] is the real coefficient of the i-th Pauli string h[i].
+        The Hamiltonian must be of the form H = \\sum_i θ[i]*h[i], where θ[i] is the real coefficient of the i-th Pauli string h[i].
         h[i][j] represents a Pauli operator acting on the j-th qubit.
         
         Example: 
-        The Hamiltonian of the TFI model H = - J \\sum_{i} \\sigma^x_i \\sigma^x_{i+1} - g \\sum_{i} \\sigma^z_i acting on 3 qubits could be represented by
-        θ = [-J, -J, -g, -g, -g]
-        h = ['XXI', 'IXX', 'ZII', 'IZI', 'IIZ']
+        The Hamiltonian of the TFI model H = - J \\sum_{i} \\sigma^x_i \\sigma^x_{i+1} - g \\sum_{i} \\sigma^z_i acting on 3 qubits.
+        H could be represented by 
+            θ = [-J, -J, -g, -g, -g]
+            h = ['XXI', 'IXX', 'ZII', 'IZI', 'IIZ']
 
     Parameters
     ----------
-    h, θ:
-        Same as attributes.
+    h, θ :
+        Same as in ``Attributes``.
 
     Attributes
     ----------
     h : list[str]
         List of Pauli string operator representations, where h[i][j] is from {'I', 'X', 'Y', 'Z'}.
-    θ : np.ndarray[dtype=float, ndim=1]
+    θ : list[float] | np.ndarray[dtype=float, ndim=1]
         Hamiltonian parameters. θ[i] is the coefficient of the i-th Pauli string h[i].
     n_qubits : int
         Number of qubits the Hamiltonian acts on.
@@ -32,7 +33,7 @@ class Hamiltonian(object):
         Number of Hamiltonian parameters.
     """
     
-    def __init__(self, h: list[str], θ: np.ndarray[float]) -> None:
+    def __init__(self, h: list[str], θ: list[float] | np.ndarray[float]) -> None:
         self.θ = np.asarray(θ)
         if self.θ.ndim != 1:
             raise ValueError("__init__: θ must have dimension 1.")
@@ -55,7 +56,7 @@ class Hamiltonian(object):
         θ_δ = np.append(self.θ * (1-δ)/(2*self.θ_norm()), (1+δ)/2)
         return h_δ, θ_δ
     
-    def assemble(self, i: Optional[int] = None) -> np.ndarray[float]:
+    def assemble(self, i: Optional[int] = None) -> np.ndarray[float | complex]:
         """Assemble pauli string operator h[i] or full Hamiltonian."""
         def assemble_pauli_string(pauli_string: str):
             σ = {'I': np.array([[1., 0.], [0., 1.]]), 

@@ -11,18 +11,18 @@ class QEVT(QSP):
 
     Parameters
     ----------
-    h, θ, enc:
+    h, θ, enc :
         See qbmqsp.block_encode.BlockEncode
 
     Attributes
     ----------
     block_encode : qbmqsp.block_encode.BlockEncode
-        Constructed from parameters (h, θ, enc).
-    φ : list[float]
+        Constructed from parameters (`h`, `θ`, `enc`).
+    φ : list[float] | np.ndarray[dtype=float, ndim=1]
         QSP phases.
     """
 
-    def __init__(self, h: list[str], θ: np.ndarray[float], enc: str, φ: list[float]) -> None:
+    def __init__(self, h: list[str], θ: list[float] | np.ndarray[float], enc: str, φ: list[float] | np.ndarray[float]) -> None:
         self.block_encode = BlockEncode(h, θ, enc)
         self.φ = φ
     
@@ -55,12 +55,12 @@ class QEVT(QSP):
                 n += self.block_encode.n_qubits(register)
         return n
 
-    def _Π(self, φ: list[float], control: list[int], target: list[int]):
+    def _Π(self, φ: list[float], control: list[int], target: list[int]) -> None:
         qml.MultiControlledX(wires=control+target, control_values=[0]*len(control))
         self.S(φ, target)
         qml.MultiControlledX(wires=control+target, control_values=[0]*len(control))
 
-    def circuit(self, aux_wire: list[int], enc_wires: list[int], sys_wires: list[int]):
+    def circuit(self, aux_wire: list[int], enc_wires: list[int], sys_wires: list[int]) -> None:
         """Apply QEVT circuit.
         
         Parameters

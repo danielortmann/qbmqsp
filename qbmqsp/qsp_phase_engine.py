@@ -12,12 +12,12 @@ class QSPPhaseEngine(object):
 
     Parameters
     ----------
-    δ, polydeg:
-        Same as attributes.
+    δ, polydeg :
+        Same as in ``Attributes``.
 
     Attributes
     ----------
-    δ : float in [0, 1]
+    δ : float, must be from interval [0, 1]
         Restricts interval on which polynomial approximation agrees with f(x) to [δ, 1].
     polydeg : int
         Degree of polynomial approximation of f(x).
@@ -42,7 +42,7 @@ class QSPPhaseEngine(object):
         ----------
         τ : float
             Imaginary time parameter of f(x).
-        convention : str in {'R', 'Wx'}
+        convention : str, must be one of {'R', 'Wx'}.
             QSP convention specifying which signal operator to use.
 
         Returns

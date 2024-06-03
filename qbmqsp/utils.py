@@ -2,12 +2,12 @@
 
 
 def int_to_bits(n: int, m: int) -> list[int]:
-    """Convert integer n to its m-bit binary representation."""
+    """Convert integer `n` to its `m`-bit binary representation."""
     return list(map(int, bin(n)[2:].zfill(m)))
 
 
 def construct_fcqbm_pauli_strings(n: int) -> list[str]:
-    """Construct representation of all Pauli string operators of a fully-connected n-qubit QBM.
+    """Construct representation of all Pauli string operators of a fully-connected `n`-qubit QBM.
         
         Parameters
         ----------

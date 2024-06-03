@@ -13,29 +13,27 @@ class BlockEncode(object):
 
     Parameters
     ----------
-    h, θ:
+    h, θ :
         See qbmqsp.hamiltonian.Hamiltonian
-    enc:
-        Same as attributes
+    enc :
+        Same as in ``Attributes``.
 
     Attributes
     ----------
     H : qbmqsp.hamiltonian.Hamiltonian
-        Constructed from parameters (h, θ).
-    enc : str in {'general', 'lcu'}
+        Constructed from parameters (`h`, `θ`).
+    enc : str, must be one of {'general', 'lcu'}.
         Unitary block encoding scheme.
-    H_operator_normalized : np.ndarray
-        if enc == 'general': Assembled Hamiltonian operator normalized by L1 norm of θ.
-    θ_amplitude : np.ndarray
-        if enc == 'lcu': Transformed Hamiltonian parameters used for amplitude encoding.
     """
 
     def __init__(self, h: list[str], θ: np.ndarray[float], enc: str) -> None:
         self.H = Hamiltonian(h, θ)
         self.enc = enc
         if enc == 'general':
+            # Assemble normalized Hamiltonian operator to be block encoded
             self._H_operator_normalized = self.H.assemble() / self.H.θ_norm()
         elif enc == 'lcu':
+            # Transform Hamiltonian parameters to perform amplitude encoding
             self._θ_amplitude = np.sqrt( np.abs( θ/self.H.θ_norm()))
         else:
             raise ValueError("__init__: enc must be one of %r." % {'general', 'lcu'})

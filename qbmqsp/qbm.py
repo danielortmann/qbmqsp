@@ -16,23 +16,23 @@ class QBM(object):
 
     Parameters
     ----------
-    β, enc:
-        Same as attributes.
-    h, θ:
+    β, enc :
+        Same as in ``Attributes``.
+    h, θ :
         See qbmqsp.hamiltonian.Hamiltonian
-    δ, polydeg:
+    δ, polydeg :
         See qbmqsp.qsp_phase_engine.QSPPhaseEngine
 
     Attributes
     ----------
     β : float
         Inverse temperature.
-    enc : str in {'general', 'lcu'}
+    enc : str, must be one of {'general', 'lcu'}
         Unitary block encoding scheme.
     H : qbmqsp.hamiltonian.Hamiltonian
-        Constructed from parameters (h, θ).
+        Constructed from parameters (`h`, `θ`).
     qsp : qbmqsp.qsp_phase_engine.QSPPhaseEngine
-        Constructed from parameters (δ, polydeg).
+        Constructed from parameters (`δ`, `polydeg`).
     qevt : qbmqsp.qevt.QEVT
         Quantum eigenvalue transform to realize matrix function f(A) = exp(- τ * |A|). Updated after each training epoch.
     observables : qml.operation.Observable
@@ -41,7 +41,7 @@ class QBM(object):
         Quantum register wires of quantum circuit that prepares and measures the QBM.
     """
     
-    def __init__(self, h: list[str], θ: np.ndarray[float], enc: str, δ: float, polydeg: int, β: float) -> None:
+    def __init__(self, h: list[str], θ: list[float] | np.ndarray[float], enc: str, δ: float, polydeg: int, β: float) -> None:
         if β < 0:
             raise ValueError("__init__: β must not be negative.")
         self.β = β
@@ -133,22 +133,22 @@ class QBM(object):
         qbm_expvals = measurements[1:] / success_probabilty
         return qbm_expvals
     
-    def _loss_func(self, ρ0: np.ndarray[float], ρ1: np.ndarray[float]) -> float:
+    def _loss_func(self, ρ0: np.ndarray[float | complex], ρ1: np.ndarray[float | complex]) -> float:
         return relative_entropy(ρ0, ρ1, check_state=True).item()
     
-    def assemble(self) -> np.ndarray[float]:
+    def assemble(self) -> np.ndarray[float | complex]:
         """Assemble QBM."""
         expH = spl.expm(-self.β * self.H.assemble())
         return expH / np.trace(expH)
     
-    def train(self, ρ_data: np.ndarray[float], learning_rate: float, epochs: int) -> tuple[list[float], list[float]]:
+    def train(self, ρ_data: np.ndarray[float | complex], learning_rate: float, epochs: int) -> tuple[list[float], list[float]]:
         """Train QBM to fit the optimal model for ρ_data in terms of Jaynes' principle.
 
         To that end, gradient descent is perfomed using the quantum relative entropy as a loss function.
         
         Parameters
         ----------
-        ρ_data : np.ndarray[dtype=float, ndim=2]
+        ρ_data : np.ndarray[ndim=2]
             Density matrix encoding the target probabilty distribution.
         learning_rate : float
             Learning rate of gradient descent update.
