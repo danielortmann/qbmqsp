@@ -42,8 +42,8 @@ class QBM(object):
     """
     
     def __init__(self, h: list[str], θ: list[float] | np.ndarray[float], enc: str, δ: float, polydeg: int, β: float) -> None:
-        if β < 0:
-            raise ValueError("__init__: β must not be negative.")
+        if not β > 0:
+            raise ValueError("__init__: β must be positive.")
         self.β = β
         self.enc = enc
         self.H = Hamiltonian(h, θ)
@@ -82,7 +82,7 @@ class QBM(object):
         return n
 
     def _generate_qsp_phases(self) -> np.ndarray[float]:
-        τ = self.β / (1-self.qsp.δ) * self.H.θ_norm()
+        τ = self.β / (1 - self.qsp.δ) * self.H.θ_norm()
         φ = self.qsp.generate(τ)
         return φ
 
@@ -102,10 +102,10 @@ class QBM(object):
     def _construct_obervables(self) -> list[qml.operation.Observable]:
         n_aux_enc = self.n_qubits({'aux', 'enc'})
         aux_enc_wires = self.aux_wire + self.enc_wires
-        proj0 = qml.Projector( [0] * n_aux_enc, aux_enc_wires)
+        proj0 = qml.Projector([0] * n_aux_enc, aux_enc_wires)
 
-        new_sys_wires = list(range(self.n_qubits('sys')))
-        wire_map = dict(zip(self.sys_wires, new_sys_wires))
+        labels = list(range(self.n_qubits('sys')))
+        wire_map = dict(zip(self.sys_wires, labels))
         observables = [proj0] + [proj0 @ string_to_pauli_word(self.H.h[i], wire_map) for i in range(self.H.n_params)]
         return observables
     
@@ -179,7 +179,8 @@ class QBM(object):
                 
                 qbm = self.assemble()
                 loss = self._loss_func(ρ_data, qbm)
-                losses.append(loss), aa_grad_θs.append(np.mean(np.abs(grad_θ)).item())
+                aa_grad_θ = np.mean(np.abs(grad_θ)).item()
+                losses.append(loss), aa_grad_θs.append(aa_grad_θ)
 
                 if epoch % 10 == 0:
                         print("Epoch %d: relative entropy S = %r" % (epoch, loss))
