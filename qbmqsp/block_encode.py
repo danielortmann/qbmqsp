@@ -21,8 +21,8 @@ class BlockEncode(object):
     Attributes
     ----------
     H : qbmqsp.hamiltonian.Hamiltonian
-        Constructed from parameters (`h`, `θ`).
-    enc : str, must be one of {'general', 'lcu'}.
+        Hamiltonian constructed from parameters (`h`, `θ`).
+    enc : {'general', 'lcu'}
         Unitary block encoding scheme.
     """
 
@@ -39,7 +39,7 @@ class BlockEncode(object):
             raise ValueError("__init__: enc must be one of %r." % {'general', 'lcu'})
         
     def n_qubits(self, registers: str | set[str] = None) -> int:
-        """Return number of qubits.
+        """Return total number of qubits used in `registers`.
         
         Parameters
         ----------
@@ -50,7 +50,7 @@ class BlockEncode(object):
         Returns
         -------
         n : int
-            Total number of qubits used in registers.
+            Total number of qubits used in `registers`.
         """
         if registers is None:
             registers = {'enc', 'sys'}
@@ -71,12 +71,25 @@ class BlockEncode(object):
         return n
 
     def _prepare_gate(self, wires: list[int]) -> None:
+        """Apply the PREPARE gate on `wires`"""
         qml.AmplitudeEmbedding(self._θ_amplitude, wires, pad_with=0)
 
     def _prepare_gate_inverse(self, wires: list[int]) -> None:
+        """Apply the inverse of the PREPARE gate on `wires`"""
         qml.adjoint(qml.AmplitudeEmbedding(self._θ_amplitude, wires, pad_with=0))
 
     def _pauli_string_gate(self, pauli_string: str, π_phase: bool, wires: list[int]) -> None:
+        """Apply the Pauli string gate of `pauli_string` on `wires`.
+        
+        Parameters
+        ----------
+        pauli_string : str
+            Pauli string representation in terms of {'I', 'X', 'Y', 'Z'}.
+        π_phase : bool
+            If True, apply relative phase factor of -1.
+        wires : list[int]
+            Wires to apply the gate on.
+        """
         if len(pauli_string) != len(wires):
             raise ValueError("pauli_string_gate: pauli_string and wires must have same length.")
         
@@ -94,6 +107,7 @@ class BlockEncode(object):
             qml.RZ(2*np.pi, wires[0])
 
     def _select_gate(self, enc_wires: list[int], sys_wires: list[int]) -> None:
+        """Apply the SELECT gate on encoding wires `enc_wires` and system wires `sys_wires`."""
         for i in range(self.H.n_params):
             qml.ctrl(self._pauli_string_gate, 
                      control=enc_wires, 
@@ -101,6 +115,7 @@ class BlockEncode(object):
                      )(self.H.h[i], self.H.θ[i] < 0, sys_wires)
 
     def _lcu_circuit(self, enc_wires: list[int], sys_wires: list[int]) -> None:
+        """Apply the LCU circuit on encoding wires `enc_wires` and system wires `sys_wires`."""
         self._prepare_gate(enc_wires)
         self._select_gate(enc_wires, sys_wires)
         self._prepare_gate_inverse(enc_wires)

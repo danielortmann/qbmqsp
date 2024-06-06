@@ -27,16 +27,17 @@ class QBM(object):
     ----------
     β : float
         Inverse temperature.
-    enc : str, must be one of {'general', 'lcu'}
+    enc : {'general', 'lcu'}
         Unitary block encoding scheme.
     H : qbmqsp.hamiltonian.Hamiltonian
-        Constructed from parameters (`h`, `θ`).
+        Hamiltonian constructed from parameters (`h`, `θ`).
     qsp : qbmqsp.qsp_phase_engine.QSPPhaseEngine
-        Constructed from parameters (`δ`, `polydeg`).
+        QSP phase generator constructed from parameters (`δ`, `polydeg`).
     qevt : qbmqsp.qevt.QEVT
-        Quantum eigenvalue transform to realize matrix function f(A) = exp(- τ * |A|). Updated after each training epoch.
+        Quantum eigenvalue transform to realize matrix function f(A) = exp(- τ * |A|). 
+        Updated after each training epoch.
     observables : qml.operation.Observable
-        Observables w.r.t which the QBM is measured to optimize via gradient descent.
+        Observables measured w.r.t the QBM for gradient descent optimization.
     aux_wire, enc_wires, sys_wires, env_wires : list[int]
         Quantum register wires of quantum circuit that prepares and measures the QBM.
     """
@@ -53,7 +54,7 @@ class QBM(object):
         self.observables = self._construct_obervables()
     
     def n_qubits(self, registers: str | set[str] = None) -> int:
-        """Return number of qubits per registers.
+        """Return total number of qubits used in `registers`.
         
         Parameters
         ----------
@@ -64,7 +65,7 @@ class QBM(object):
         Returns
         -------
         n : int
-            Number of qubits used per registers.
+            Total number of qubits used in `registers`.
         """
         if registers is None:
             registers = {'aux', 'enc', 'sys', 'env'}
@@ -142,7 +143,7 @@ class QBM(object):
         return expH / np.trace(expH)
     
     def train(self, ρ_data: np.ndarray[float | complex], learning_rate: float, epochs: int) -> tuple[list[float], list[float]]:
-        """Train QBM to fit the optimal model for ρ_data in terms of Jaynes' principle.
+        """Train QBM to fit ρ_data in terms of Jaynes' principle.
 
         To that end, gradient descent is perfomed using the quantum relative entropy as a loss function.
         
@@ -158,10 +159,10 @@ class QBM(object):
         Returns
         -------
         losses : list[float]
-            List containing the loss after each epoch.
+            List containing the relative entropies after each epoch.
         aa_grad_θs : list[float]
-            List containing the absolute average of the gradient of the loss function w.r.t. θ after each epoch
-            This is equivalent to the average absolute deviation of the expectation values between QBM and ρ_data in terms of Jaynes' principle.
+            List containing the absolute average of θ gradients after each epoch.
+            This is equivalent to the average absolute deviations of the expectation values between QBM and ρ_data in terms of Jaynes' principle.
         """
         if not ρ_data.ndim == 2:
             raise ValueError("train: ρ_data must be a 2D array.")

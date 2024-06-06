@@ -34,7 +34,7 @@ def construct_fcqbm_pauli_strings(n: int) -> list[str]:
     return h
 
 def construct_multi_fcqbm_pauli_strings(n: int) -> list[str]:
-    """Same as construct_fcqbm_pauli_strings but add multi-qubit interactions."""
+    """Extend `construct_fcqbm_pauli_strings` by adding multi-qubit interactions."""
     h = list()
     for p in ['X', 'Y', 'Z']:
 

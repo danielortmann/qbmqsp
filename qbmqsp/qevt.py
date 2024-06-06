@@ -1,4 +1,4 @@
-"""QEVT"""
+"""Quantum eigenvalue transform"""
 import pennylane as qml
 from pennylane import numpy as np
 
@@ -17,7 +17,7 @@ class QEVT(QSP):
     Attributes
     ----------
     block_encode : qbmqsp.block_encode.BlockEncode
-        Constructed from parameters (`h`, `θ`, `enc`).
+        Unitary block encoding constructed from parameters (`h`, `θ`, `enc`).
     φ : list[float] | np.ndarray[dtype=float, ndim=1]
         QSP phases.
     """
@@ -27,7 +27,7 @@ class QEVT(QSP):
         self.φ = φ
     
     def n_qubits(self, registers: str | set[str] = None) -> int:
-        """Return number of qubits.
+        """Return total number of qubits used in `registers`.
         
         Parameters
         ----------
@@ -38,7 +38,7 @@ class QEVT(QSP):
         Returns
         -------
         n : int
-            Total number of qubits used in registers.
+            Total number of qubits used in `registers`.
         """
         if registers is None:
             registers = {'aux', 'enc', 'sys'}
@@ -56,6 +56,7 @@ class QEVT(QSP):
         return n
 
     def _Π(self, φ: list[float], control: list[int], target: list[int]) -> None:
+        "Apply projector-controlled phase shift operator."
         qml.MultiControlledX(wires=control+target, control_values=[0]*len(control))
         self.S(φ, target)
         qml.MultiControlledX(wires=control+target, control_values=[0]*len(control))
@@ -66,7 +67,7 @@ class QEVT(QSP):
         Parameters
         ----------
         aux_wire : list[int]
-            Auxiliary wire used for block encoding the projector controlled phase shift operation Π_φ.
+            Auxiliary wire used for block encoding the projector-controlled phase shift operators Π_φ.
         enc_wires : list[int]
             Wires used for block encoding the Hamiltonian.
         sys_wires: list[int]

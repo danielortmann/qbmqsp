@@ -1,4 +1,4 @@
-"""Quantum relative entropy"""
+"""Modified quantum relative entropy"""
 import pennylane as qml
 from pennylane import numpy as np
 from pennylane.math.utils import allclose, is_abstract, cast, cast_like
@@ -77,8 +77,9 @@ def _compute_relative_entropy(rho, sigma, base=None):
 
     # cast all eigenvalues to real
     evs_rho, evs_sig = np.real(evs_rho), np.real(evs_sig)
+    
     ############ NEW #########################################
-    # Set eigenvalues to zero if they are negative and close to zero due to finite machine precision
+    # Set eigenvalues to zero if they are negative and close to zero due to finite machine precision.
     evs_rho[np.isclose(evs_rho, 0).numpy() * evs_rho < 0] = 0
     evs_sig[np.isclose(evs_sig, 0).numpy() * evs_sig < 0] = 0
     ##########################################################

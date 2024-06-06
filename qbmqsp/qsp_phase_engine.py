@@ -1,11 +1,11 @@
-"""QSP phase factors for Gibbs state preparation"""
+"""QSP phase factor generator for Gibbs state preparation"""
 import matlab.engine
 
 from pennylane import numpy as np
 
 
 class QSPPhaseEngine(object):
-    """QSP phase generator for Gibbs state preparation.
+    """QSP phase factor generator for Gibbs state preparation.
 
     Compute QSP phases of a polynomial approximation of f(x) = exp(- τ * |x|) on an interval [δ, 1] by interfacing with QSPPACK.
     The polynomial approximation is solved using convex optimization.
@@ -17,8 +17,8 @@ class QSPPhaseEngine(object):
 
     Attributes
     ----------
-    δ : float, must be from interval [0, 1]
-        Restricts interval on which polynomial approximation agrees with f(x) to [δ, 1].
+    δ : float, ∈ [0, 1]
+        Restricts interval on which polynomial approximation agrees with f(x) to [`δ`, 1].
     polydeg : int
         Degree of polynomial approximation of f(x).
     eng : matlab.engine.matlabengine.MatlabEngine
@@ -42,7 +42,7 @@ class QSPPhaseEngine(object):
         ----------
         τ : float
             Imaginary time parameter of f(x).
-        convention : str, must be one of {'R', 'Wx'}.
+        convention : {'R', 'Wx'}
             QSP convention specifying which signal operator to use.
 
         Returns
