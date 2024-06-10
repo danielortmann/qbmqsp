@@ -142,14 +142,12 @@ class QBM(object):
         expH = spl.expm(-self.β * self.H.assemble())
         return expH / np.trace(expH)
     
-    def train(self, ρ_data: np.ndarray[float | complex], learning_rate: float, epochs: int) -> tuple[list[float], list[float]]:
-        """Train QBM to fit ρ_data in terms of Jaynes' principle.
-
-        To that end, gradient descent is perfomed using the quantum relative entropy as a loss function.
+    def train(self, χ: np.ndarray[float | complex], learning_rate: float, epochs: int) -> tuple[list[float], list[float]]:
+        """Train QBM to fit χ by minimizing the quantum relative entropy via gradient descent.
         
         Parameters
         ----------
-        ρ_data : np.ndarray[ndim=2]
+        χ : np.ndarray[ndim=2]
             Density matrix encoding the target probabilty distribution.
         learning_rate : float
             Learning rate of gradient descent update.
@@ -162,24 +160,24 @@ class QBM(object):
             List containing the relative entropies after each epoch.
         aa_grad_θs : list[float]
             List containing the absolute average of θ gradients after each epoch.
-            This is equivalent to the average absolute deviations of the expectation values between QBM and ρ_data in terms of Jaynes' principle.
+            This is equivalent to the average absolute deviations of the expectation values of the Hamiltonian terms between the QBM and χ.
         """
-        if not ρ_data.ndim == 2:
-            raise ValueError("train: ρ_data must be a 2D array.")
+        if not χ.ndim == 2:
+            raise ValueError("train: χ must be a 2D array.")
 
-        ρ_data_expvals = np.array([np.trace(ρ_data @ self.H.assemble(i)) for i in range(self.H.n_params)])
+        χ_expvals = np.array([np.trace(χ @ self.H.assemble(i)) for i in range(self.H.n_params)])
 
         losses, aa_grad_θs = [], []
         for epoch in range(1, epochs + 1):
                 
                 qbm_expvals = self._compute_expvals()
-                grad_θ = ρ_data_expvals - qbm_expvals
+                grad_θ = χ_expvals - qbm_expvals
                 self.H.θ = self.H.θ - learning_rate * grad_θ
                 
                 self.qevt = self._construct_qevt()
                 
                 qbm = self.assemble()
-                loss = self._loss_func(ρ_data, qbm)
+                loss = self._loss_func(χ, qbm)
                 aa_grad_θ = np.mean(np.abs(grad_θ)).item()
                 losses.append(loss), aa_grad_θs.append(aa_grad_θ)
 
@@ -189,6 +187,6 @@ class QBM(object):
         
         print("\nFinal relative entropy S = %r" % loss)
         print("Final absolute average of grad_θ = %r" % aa_grad_θs[-1])
-        print("Final quadratic error = %r" % np.sum((qbm - ρ_data)**2))
+        print("Final quadratic error = %r" % np.sum((qbm - χ)**2))
 
         return losses, aa_grad_θs
