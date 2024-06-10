@@ -157,7 +157,6 @@ The normalization factor is the trace of the LHS and equivalent to the success p
  |       [CVX](https://cvxr.com/cvx/doc/install.html) |  |
  |       [QSPPACK](https://github.com/qsppack/QSPPACK) |  |
  
-<br>
 
 ### Installation
 
@@ -199,7 +198,6 @@ conda activate qbmqsp
 ```
     The source files can now be imported into a Python session as any other package, namely via `import qbmqsp`.
 
-<br>
 
 ### Executing program
 
