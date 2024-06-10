@@ -31,7 +31,7 @@ class QSPPhaseEngine(object):
         
         self.δ = δ
         self.polydeg = polydeg
-        print("\nStarting MATLAB engine..", end=" ", flush=True)
+        print("\nStarting MATLAB engine ...", end=" ", flush=True)
         self.eng = matlab.engine.start_matlab()
         print("Done.\n")
 
