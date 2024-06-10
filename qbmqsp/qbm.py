@@ -171,7 +171,7 @@ class QBM(object):
         for epoch in range(1, epochs + 1):
                 
                 qbm_expvals = self._compute_expvals()
-                grad_θ = χ_expvals - qbm_expvals
+                grad_θ = self.β * (χ_expvals - qbm_expvals)
                 self.H.θ = self.H.θ - learning_rate * grad_θ
                 
                 self.qevt = self._construct_qevt()
