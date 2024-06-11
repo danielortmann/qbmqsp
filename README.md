@@ -10,17 +10,7 @@ One approach is to prepare a QBM on a quantum computer by utilizing the quantum 
 
 This project implements a numerical simulation of the QEVT and employs it as a subroutine for the training of a QBM.
 The necessary QSP phase factors are solved by interfacing with QSPPACK[^1].
-For the unitary block encoding of the QBM Hamiltonian, either a general unitary block encoding or the hardware-compatible LCU method is performed.
-
-
-<!--<div align="center">
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" width="650">
-  <img alt="qbmqsp" src="./images/....png" width="650">
-</picture>
-
-</div> -->
+For the unitary block encoding of the QBM Hamiltonian, either a general unitary block encoding or the hardware-compatible LCU[^2] method is performed.
 
 
 <!-- TABLE OF CONTENTS -->
@@ -70,11 +60,11 @@ $$ \mathcal{H}\_\theta = \sum\_i \theta\_i h\_i  \hspace{0.1cm}, $$
 where $\theta\_i \in \mathbb{R}$ and $h\_i = {\bigotimes}_{j=0}^{n-1} \hspace{0.1cm} \sigma\_{j,i}$ with $\sigma\_{j,i} \in \\{ I, X, Y, Z \\}$. 
 A QBM can be used for generative modeling of classical and quantum data. 
 To that end, the QBM is usually optimized to fit some target quantum state $\chi$, which could encode some classical probability distribution or correspond to some quantum mechanical physical system of interest.
-To that end, the QBM is trained by minimizing the quantum relative entropy[^2], 
+To that end, the QBM is trained by minimizing the quantum relative entropy[^3], 
 
 $$ S( \chi \hspace{0.1cm} \Vert \hspace{0.1cm} \rho\_{\theta} ) = \text{Tr}\[ \chi \hspace{0.1cm} \text{log} \hspace{0.1cm} \chi \] - \text{Tr}\[ \chi \hspace{0.1cm} \hspace{0.05cm} \text{log} \hspace{0.1cm} \rho\_\theta \] \hspace{0.1cm}, $$ 
 
-which is stricly convex[^3] and zero if and only if $\chi = \rho\_{\theta}$. 
+which is stricly convex[^4] and zero if and only if $\chi = \rho\_{\theta}$. 
 $S$ is usually minimized via gradient descent and the gradient is given by the difference of expectation values of $\frac{\partial \hspace{0.05cm} \mathcal{H}\_\theta}{\partial\theta}$ between the target and the model density matrix, which for the above Hamiltonian is given by
 
 $$ \frac{ \partial S( \chi \hspace{0.1cm} \Vert \hspace{0.1cm} \rho\_{\theta})}{\partial\theta\_i} = \beta \hspace{0.1cm} ( \hspace{0.05cm} \langle{ h\_i }\rangle\_{\chi} - \langle{ h\_i }\rangle\_{\rho\_\theta} \hspace{0.05cm} ) \hspace{0.1cm}. $$
@@ -238,6 +228,8 @@ Daniel Ortmann
 
 [^1]: Dong, Y., Meng, X., Whaley, K.B. and Lin, L., 2021. Efficient phase-factor evaluation in quantum signal processing. Physical Review A, 103(4), p.042419.
 
-[^2]: Kieferova, M. and Wiebe, N., 2017. Tomography and generative training with quantum Boltzmann machines. Physical Review A, 96(6), p.062327.
+[^2]: Childs, A. M. and Wiebe, N., 2012. Hamiltonian simulation using linear combinations of unitary operations. Quantum Information & Computation, 12(11-12), pp. 901–924.
 
-[^3]: Coopmans, L. and Benedetti, M., 2024. On the Sample Complexity of Quantum Boltzmann Machine Learning. arXiv:2306.14969 [quant-ph]
+[^3]: Kieferova, M. and Wiebe, N., 2017. Tomography and generative training with quantum Boltzmann machines. Physical Review A, 96(6), p.062327.
+
+[^4]: Coopmans, L. and Benedetti, M., 2024. On the Sample Complexity of Quantum Boltzmann Machine Learning. arXiv:2306.14969 [quant-ph].
