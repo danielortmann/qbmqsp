@@ -4,9 +4,9 @@ An implementation of a quantum Boltzmann machine (QBM) based on quantum signal p
 
 > **Methods**: Quantum Botlzmann Machine, Quantum Machine Learning, Quantum Signal Processing, Quantum Eigenvalue Transform, Unitary Block Encoding.
 
-The training of QBMs involves the evaluation of Gibbs state expectation values, which is in case of large systems computationally intractable for classical computers due to the exponentially growing Hilbert space. 
-However, this could be remedied through the usage of a quantum computer. 
-One approach is to prepare a QBM on a quantum computer by utilizing the quantum eigenvalue transform (QEVT), a framework for realizing matrix polynomials on a quantum computer based on quantum signal processing (QSP).
+The training of QBMs involves the evaluation of Gibbs state expectation values, which is computationally intractable for classical computers due to the exponentially growing Hilbert space. 
+However, this could be remedied through the usage of quantum computation. 
+One approach is to prepare a QBM on a quantum computer by leveraging the quantum eigenvalue transform (QEVT), a framework for realizing matrix polynomials on a quantum computer based on quantum signal processing (QSP).
 
 This project implements a numerical simulation of the QEVT and employs it as a subroutine for the training of a QBM.
 The necessary QSP phase factors are solved by interfacing with QSPPACK[^1].
