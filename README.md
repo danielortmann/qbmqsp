@@ -94,11 +94,11 @@ By computing $\varphi$ for $f\_\tau$ with $\tau = \frac{ \hspace{0.1cm} \beta \h
 
 $$ {}\_A\bra{0}  U\_\varphi  \ket{0}\_A = f\_\tau(\mathcal{H}\_{\theta}^{\delta}) = e^{- \tau  \hspace{0.05cm} \mathcal{H}\_{\theta}^{\delta}} = e^{- \beta \frac{1+\delta}{1-\delta} \lVert\theta\rVert\_1} \hspace{0.2cm} V\_\theta  \hspace{0.1cm}. $$
 
-Hence, by preparing the state $\ket{0}\_{A} \otimes \ket{\phi^{+}}\_{{S, E}}^{\otimes n}$ , applying $U\_\varphi$ on $A$ and $S$ and measuring '0' in $A$, performing any measurement on system $S$ but not $E$, results in the statistics of a QBM:
+Hence, by preparing the state $\ket{0}\_{A} \otimes \ket{\phi^{+}}\_{{S, E}}^{\otimes n}$ , applying $U\_\varphi$ on $A$ and $S$ and measuring $\ket{0}\_A$ in $A$, performing any measurement on system $S$ but not $E$, results in the statistics of a QBM:
 
 $$ \text{Tr}\_{E}\[ \hspace{0.2cm} {}\_A\bra{0} \hspace{0.2cm} U\_\varphi \hspace{0.2cm} ( \hspace{0.1cm} \ket{0}\bra{0}\_A \otimes \ket{\phi^{+}}\bra{\phi^{+}}\_{{S, E}}^{\otimes n} \hspace{0.1cm} ) \hspace{0.2cm} U\_\varphi^{\dagger} \hspace{0.2cm} \ket{0}\_A  \hspace{0.2cm} \] \hspace{0.2cm} \sim \hspace{0.2cm} \rho\_\theta \hspace{0.1cm} .$$
 
-The normalization factor is the trace of the LHS and equivalent to the success probabilty of measuring '0' in $A$, $p_0 = \text{Tr}\[ e^{- \beta \mathcal{H}\_\theta} \] \hspace{0.1cm} 2^{-n} \hspace{0.1cm} e^{- \beta \frac{1-\delta}{1+\delta} \lVert\theta\rVert\_1} \hspace{0.1cm}.$
+The normalization factor is the trace of the LHS and equivalent to the success probabilty of measuring $\ket{0}\_A$ in $A$, $p_0 = \text{Tr}\[ e^{- \beta \mathcal{H}\_\theta} \] \hspace{0.1cm} 2^{-n} \hspace{0.1cm} e^{- \beta \frac{1-\delta}{1+\delta} \lVert\theta\rVert\_1} \hspace{0.1cm}.$ The success probabilty can be increased by employing amplitude amplification in system $A$.
 
 
 --------------------------------------------------------
