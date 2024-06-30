@@ -136,12 +136,12 @@ The normalization factor is the trace of the LHS and equivalent to the success p
 | **Dependency** | **Version** |
 | -------------- | ----------- |
  | [python]() | 3.11.0 |
- |        [ipykernel]() | 6.29.4 |
+ |        [ipykernel](https://pypi.org/project/ipykernel/) | 6.29.4 |
  |       [matlabengine](https://pypi.org/project/matlabengine/) | 24.1.2 |
- |       [matplotlib]() | 3.9.0 |
- |       [networkx]() | 3.3 |
+ |       [matplotlib](https://pypi.org/project/matplotlib/) | 3.9.0 |
+ |       [networkx](https://pypi.org/project/networkx/) | 3.3 |
  |       [pennylane](https://pennylane.ai/install/) |  0.36.0 |
- |       [scipy]() | 1.13.1 |
+ |       [scipy](https://pypi.org/project/scipy/) | 1.13.1 |
  | [MATLAB](https://de.mathworks.com/products/new_products/latest_features.html) | R2024a |
  |       [chebfun](https://www.chebfun.org/download/) |  |
  |       [CVX](https://cvxr.com/cvx/doc/install.html) |  |
