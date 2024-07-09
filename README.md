@@ -1,6 +1,6 @@
 # QBMQSP (Βeta version)
 
-An implementation of a quantum Boltzmann machine (QBM) based on quantum signal processing.
+An implementation of a fully-visible quantum Boltzmann machine (QBM) based on quantum signal processing.
 
 > **Methods**: Quantum Botlzmann Machine, Quantum Machine Learning, Quantum Signal Processing, Quantum Eigenvalue Transform, Unitary Block Encoding.
 
@@ -47,7 +47,7 @@ For the unitary block encoding of the QBM Hamiltonian, either a general unitary 
 ## Description <a name="description"></a>
 
 ### Training a QBM <a name="training-a-qbm"></a>
-A QBM is a machine learning (ML) model of the form of a variational Gibbs state, 
+A fully-visible QBM is a machine learning model of the form of a variational Gibbs state, 
 
 $$ \rho\_\theta = \frac{ e^{-\beta \hspace{0.05cm} \mathcal{H}\_\theta} }{ \text{Tr}\[ e^{-\beta  \hspace{0.05cm} \mathcal{H}\_\theta} \] } \hspace{0.1cm}, $$
 
