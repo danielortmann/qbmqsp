@@ -49,13 +49,13 @@ For the unitary block encoding of the QBM Hamiltonian, either a general unitary 
 ### Training a QBM <a name="training-a-qbm"></a>
 A fully-visible QBM is a machine learning model of the form of a variational Gibbs state, 
 
-$$ \rho\_\theta = \frac{ e^{-\beta \hspace{0.05cm} \mathcal{H}\_\theta} }{ \text{Tr}\[ e^{-\beta  \hspace{0.05cm} \mathcal{H}\_\theta} \] } \hspace{0.1cm}, $$
+$$ \rho\_\theta = \frac{ e^{-\beta \hspace{0.05cm} H\_\theta} }{ \text{Tr}\[ e^{-\beta  \hspace{0.05cm} H\_\theta} \] } \hspace{0.1cm}, $$
 
-where $\mathcal{H}\_\theta$ is a Hamiltonian parameterized by variational parameters $\theta$, acting on $n$ qubits. 
-The constant inverse temperature $\beta$ could in principle also be absorbed into $\mathcal{H}\_\theta$. 
+where $H\_\theta$ is a Hamiltonian parameterized by variational parameters $\theta$, acting on $n$ qubits. 
+The constant inverse temperature $\beta$ could in principle also be absorbed into $H\_\theta$. 
 We restrict ourselves to representations of the form 
 
-$$ \mathcal{H}\_\theta = \sum\_i \theta\_i h\_i  \hspace{0.1cm}, $$
+$$ H\_\theta = \sum\_i \theta\_i h\_i  \hspace{0.1cm}, $$
 
 where $\theta\_i \in \mathbb{R}$ and $h\_i = {\bigotimes}_{j=0}^{n-1} \hspace{0.1cm} \sigma\_{j,i}$ with $\sigma\_{j,i} \in \\{ I, X, Y, Z \\}$. 
 A QBM can be used for generative modeling of classical and quantum data. 
@@ -65,7 +65,7 @@ To that end, the QBM is trained by minimizing the quantum relative entropy[^3],
 $$ S( \chi \hspace{0.1cm} \Vert \hspace{0.1cm} \rho\_{\theta} ) = \text{Tr}\[ \chi \hspace{0.1cm} \text{log} \hspace{0.1cm} \chi \] - \text{Tr}\[ \chi \hspace{0.1cm} \hspace{0.05cm} \text{log} \hspace{0.1cm} \rho\_\theta \] \hspace{0.1cm}, $$ 
 
 which is stricly convex[^4] and zero if and only if $\chi = \rho\_{\theta}$. 
-$S$ is usually minimized via gradient descent and the gradient is given by the difference of expectation values of $\frac{\partial \hspace{0.05cm} \mathcal{H}\_\theta}{\partial\theta}$ between the target and the model density matrix, which for the above Hamiltonian is given by
+$S$ is usually minimized via gradient descent and the gradient is given by the difference of expectation values of $\frac{\partial \hspace{0.05cm} H\_\theta}{\partial\theta}$ between the target and the model density matrix, which for the above Hamiltonian is given by
 
 $$ \frac{ \partial S( \chi \hspace{0.1cm} \Vert \hspace{0.1cm} \rho\_{\theta})}{\partial\theta\_i} = \beta \hspace{0.1cm} ( \hspace{0.05cm} \langle{ h\_i }\rangle\_{\chi} - \langle{ h\_i }\rangle\_{\rho\_\theta} \hspace{0.05cm} ) \hspace{0.1cm}. $$
 
@@ -76,29 +76,29 @@ To that end, this project utilizes the framework of QEVT.
 ### Preparing a QBM <a name="preparing-a-qbm"></a>
 As a mixed quantum state, the QBM is not prepared directly, but rather a purification of it. 
 Given an $n$-qubit QBM, we define two $n$-qubit registers, the system register $S$ and the environment register $E$, to prepare $\ket{\phi^{+}}\_{{S, E}}^{\otimes n} \hspace{0.1cm},$ where $\ket{\phi^{+}}\_{{S, E}} = \frac{1}{\sqrt{2}} (\ket{00} + \ket{11})$ denotes the maximally entangled state with the first qubit in $S$ and and the second qubit in $E$. 
-We then apply $V\_\theta = e^{- \frac{\beta}{2} \hspace{0.05cm} \mathcal{H}\_\theta}$ and perform measurements in $S$ but not in $E$, i.e. we trace out $E$, resulting in QBM statistics:
+We then apply $V\_\theta = e^{- \frac{\beta}{2} \hspace{0.05cm} H\_\theta}$ and perform measurements in $S$ but not in $E$, i.e. we trace out $E$, resulting in a QBM:
 
-$$ \text{Tr}\_{E} \[ \hspace{0.2cm} V\_\theta \hspace{0.2cm} \ket{\phi^{+}}\bra{\phi^{+}}\_{S,E}^{\otimes n} \hspace{0.2cm} V\_\theta^{\dagger} \hspace{0.2cm} \] = \rho\_\theta \hspace{0.1cm}. $$
+$$ \text{Tr}\_{E} \[ \hspace{0.2cm} (V\_\theta \otimes I\_E) \hspace{0.2cm} \ket{\phi^{+}}\bra{\phi^{+}}\_{S,E}^{\otimes n} \hspace{0.2cm} (V\_\theta^{\dagger} \otimes I\_E) \hspace{0.2cm} \] = \rho\_\theta \hspace{0.1cm}. $$
 
-To apply the non-unitary, imaginary-time evolution operator $V\_\theta = e^{- \frac{\beta}{2} \hspace{0.05cm} \mathcal{H}\_\theta}$ we utilize QEVT. As a first ingredient we perform a unitary block encoding of the Hamiltonian, which requires a third register, the auxiliary register $A$. This project implements the general encoding scheme and the hardware-compatible LCU method. As a second ingredient we need to find the QSP phase factors to realize $e^{- \frac{\beta}{2} x}$ on a quantum computer.
-However, since the QSP theorem only allows for realizing polynomials of definite parity, we compute the QSP phase factors $\varphi$ for a polynomial approximation of the even function $f\_\tau (x) = e^{- \tau \hspace{0.05cm} |x|}$, for some $\tau \in \mathbb{R}$. This is achieved by interfacing with QSPPACK, which finds a polynomial approximation of $f\_\tau$ on an interval $\[\delta, \hspace{0.05cm} 1\]$ for some tunable parameter $\delta \in (0, \hspace{0.05cm} 1)$.
+To apply the non-unitary, imaginary-time evolution operator $V\_\theta$ we utilize QEVT. As a first ingredient we perform a unitary block encoding of the Hamiltonian, which requires a third register, the auxiliary register $A$. This project implements the general encoding scheme and the hardware-compatible LCU method. As a second ingredient we need to find the QSP phase factors to realize $e^{- \frac{\beta}{2} x}$ on a quantum computer.
+However, since the QSP theorem only allows for realizing polynomials of definite parity, we compute the QSP phase factors $\varphi$ for a polynomial approximation of the even function $f\_\tau (x) = e^{- \tau \hspace{0.05cm} |x|}$ for some $\tau \in \mathbb{R}$. This is achieved by interfacing with QSPPACK, which finds a polynomial approximation of $f\_\tau$ on an interval $\[\delta, \hspace{0.05cm} 1\]$ for some tunable parameter $\delta \in (0, \hspace{0.05cm} 1)$.
 
-Hence, to realize $V\_\theta$, we have to scale the spectrum of $\mathcal{H}\_\theta$ to the interval $\[\delta, \hspace{0.05cm} 1\]$. 
-Since $\mathcal{H}\_\theta$ is a linear combination of Pauli string operators, which have eigenvalues $\pm 1$, the operator norm is bounded by $\lVert \mathcal{H}\_\theta \rVert \le \lVert\theta\rVert\_1$. Therefore, the preprocessing
+Hence, to realize $V\_\theta$, we have to scale the spectrum of $H\_\theta$ to the interval $\[\delta, \hspace{0.05cm} 1\]$. 
+Since $H\_\theta$ is a linear combination of Pauli string operators, which have eigenvalues $\pm 1$, the operator norm is bounded by $\lVert H\_\theta \rVert \le \lVert\theta\rVert\_1$. Therefore, the preprocessing
 
-$$ \mathcal{H}\_\theta^\delta = \frac{ \mathcal{H}\_\theta + \lVert\theta\rVert\_1 \mathcal{I} } { 2 \lVert\theta\rVert\_1 } (1-\delta) + \delta \hspace{0.1cm} \mathcal{I} \hspace{0.1cm} $$
+$$ H\_\theta^\delta = \frac{ H\_\theta + \lVert\theta\rVert\_1 \mathcal{I} } { 2 \lVert\theta\rVert\_1 } (1-\delta) + \delta \hspace{0.1cm} \mathcal{I} \hspace{0.1cm} $$
 
-results in $\text{spec}( \mathcal{H}\_\theta^{\delta} ) \subset \[\delta, \hspace{0.05cm} 1\]$. 
+results in $\text{spec}( H\_\theta^{\delta} ) \subset \[\delta, \hspace{0.05cm} 1\]$. 
 
 By computing $\varphi$ for $f\_\tau$ with $\tau = \frac{ \hspace{0.1cm} \beta \hspace{0.05cm} \lVert\theta\rVert\_1}{1-\delta}$ and employing QEVT, we are able to implement a unitary $U\_\varphi$ acting on $A$ and $S$ such that
 
-$$ {}\_A\bra{0}  U\_\varphi  \ket{0}\_A = f\_\tau(\mathcal{H}\_{\theta}^{\delta}) = e^{- \tau  \hspace{0.05cm} \mathcal{H}\_{\theta}^{\delta}} = e^{- \beta \frac{1+\delta}{1-\delta} \lVert\theta\rVert\_1} \hspace{0.2cm} V\_\theta  \hspace{0.1cm}. $$
+$$ (\bra{0}_A \otimes I\_S) \hspace{0.15cm} U\_\varphi \hspace{0.15cm} (\ket{0}\_A \otimes I\_S) = f\_\tau(H\_{\theta}^{\delta}) = e^{- \tau  \hspace{0.05cm} H\_{\theta}^{\delta}} = V\_\theta \hspace{0.15cm} e^{- \beta \frac{1+\delta}{1-\delta} \lVert\theta\rVert\_1} \hspace{0.1cm}. $$
 
-Hence, by preparing the state $\ket{0}\_{A} \otimes \ket{\phi^{+}}\_{{S, E}}^{\otimes n}$ , applying $U\_\varphi$ on $A$ and $S$ and measuring $\ket{0}\_A$ in $A$, performing any measurement on system $S$ but not $E$, results in the statistics of a QBM:
+Hence, by preparing the state $\ket{0}\_{A} \otimes \ket{\phi^{+}}\_{{S, E}}^{\otimes n}$ , applying $U\_\varphi$ on $A$ and $S$ and measuring $\ket{0}\_A$ in $A$, performing any measurement on system $S$ but not $E$, results in an effective preparation of a QBM:
 
-$$ \text{Tr}\_{E}\[ \hspace{0.2cm} {}\_A\bra{0} \hspace{0.2cm} U\_\varphi \hspace{0.2cm} ( \hspace{0.1cm} \ket{0}\bra{0}\_A \otimes \ket{\phi^{+}}\bra{\phi^{+}}\_{{S, E}}^{\otimes n} \hspace{0.1cm} ) \hspace{0.2cm} U\_\varphi^{\dagger} \hspace{0.2cm} \ket{0}\_A  \hspace{0.2cm} \] \hspace{0.2cm} \sim \hspace{0.2cm} \rho\_\theta \hspace{0.1cm} .$$
+$$ \text{Tr}\_{E}\[ \hspace{0.2cm} (\bra{0}_A \otimes I\_S) \hspace{0.2cm} U\_\varphi \hspace{0.2cm} ( \hspace{0.1cm} \ket{0}\bra{0}\_A \otimes \ket{\phi^{+}}\bra{\phi^{+}}\_{{S, E}}^{\otimes n} \hspace{0.1cm} ) \hspace{0.2cm} U\_\varphi^{\dagger} \hspace{0.2cm} (\ket{0}_A \otimes I\_S)  \hspace{0.2cm} \] \hspace{0.2cm} \sim \hspace{0.2cm} \rho\_\theta \hspace{0.1cm} .$$
 
-The normalization factor is the trace of the LHS and equivalent to the success probability of measuring $\ket{0}\_A$ in $A$, $p_0 = \text{Tr}\[ e^{- \beta \mathcal{H}\_\theta} \] \hspace{0.1cm} 2^{-n} \hspace{0.1cm} e^{- \beta \frac{1-\delta}{1+\delta} \lVert\theta\rVert\_1} \hspace{0.1cm}$, which can be increased by employing amplitude amplification in system $A$.
+The normalization factor is the trace of the LHS and equivalent to the success probability of measuring $\ket{0}\_A$ in $A$, $p_0 = \text{Tr}\[ e^{- \beta H\_\theta} \] \hspace{0.1cm} 2^{-n} \hspace{0.1cm} e^{- \beta \frac{1-\delta}{1+\delta} \lVert\theta\rVert\_1} \hspace{0.1cm}$, which can be increased by employing amplitude amplification in system $A$.
 
 
 --------------------------------------------------------
