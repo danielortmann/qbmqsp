@@ -5,7 +5,7 @@ An implementation of a fully-visible quantum Boltzmann machine (QBM) based on qu
 > **Methods**: Quantum Botlzmann Machine, Quantum Machine Learning, Quantum Signal Processing, Quantum Eigenvalue Transform, Unitary Block Encoding.
 
 The training of QBMs involves the evaluation of Gibbs state expectation values, which is computationally intractable for classical computers due to the exponentially growing Hilbert space. 
-However, this could be remedied through the usage of quantum computation. 
+However, this could be remedied through the usage of a quantum computer. 
 One approach is to prepare a QBM on a quantum computer by leveraging the quantum eigenvalue transform (QEVT), a framework for realizing matrix polynomials on a quantum computer based on quantum signal processing (QSP).
 
 This project implements a numerical simulation of the QEVT and employs it as a subroutine for the training of a QBM.
@@ -53,7 +53,7 @@ $$ \rho\_\theta = \frac{ e^{-\beta \hspace{0.05cm} \mathcal{H}\_\theta} }{ \text
 
 where $\mathcal{H}\_\theta$ is a Hamiltonian parameterized by variational parameters $\theta$, acting on $n$ qubits. 
 The constant inverse temperature $\beta$ could in principle also be absorbed into $\mathcal{H}\_\theta$. 
-We restrict ourselves to Hamiltonians consisting of a linear combination of Pauli string operators, 
+We restrict ourselves to representations of the form 
 
 $$ \mathcal{H}\_\theta = \sum\_i \theta\_i h\_i  \hspace{0.1cm}, $$
 
@@ -75,7 +75,7 @@ To that end, this project utilizes the framework of QEVT.
 
 ### Preparing a QBM <a name="preparing-a-qbm"></a>
 As a mixed quantum state, the QBM is not prepared directly, but rather a purification of it. 
-Given an $n$-qubit QBM, we define two $n$-qubit registers, the system register $S$ and the environment register $E$, to prepare $\ket{\phi^{+}}\_{{S, E}}^{\otimes n} \hspace{0.1cm},$ where $\ket{\phi^{+}}\_{{S, E}} = \frac{1}{\sqrt{2}} (\ket{00} + \ket{11})$ denotes the maxmially entangled state with the first qubit in $S$ and and the second qubit in $E$. 
+Given an $n$-qubit QBM, we define two $n$-qubit registers, the system register $S$ and the environment register $E$, to prepare $\ket{\phi^{+}}\_{{S, E}}^{\otimes n} \hspace{0.1cm},$ where $\ket{\phi^{+}}\_{{S, E}} = \frac{1}{\sqrt{2}} (\ket{00} + \ket{11})$ denotes the maximally entangled state with the first qubit in $S$ and and the second qubit in $E$. 
 We then apply $V\_\theta = e^{- \frac{\beta}{2} \hspace{0.05cm} \mathcal{H}\_\theta}$ and perform measurements in $S$ but not in $E$, i.e. we trace out $E$, resulting in QBM statistics:
 
 $$ \text{Tr}\_{E} \[ \hspace{0.2cm} V\_\theta \hspace{0.2cm} \ket{\phi^{+}}\bra{\phi^{+}}\_{S,E}^{\otimes n} \hspace{0.2cm} V\_\theta^{\dagger} \hspace{0.2cm} \] = \rho\_\theta \hspace{0.1cm}. $$
@@ -98,7 +98,7 @@ Hence, by preparing the state $\ket{0}\_{A} \otimes \ket{\phi^{+}}\_{{S, E}}^{\o
 
 $$ \text{Tr}\_{E}\[ \hspace{0.2cm} {}\_A\bra{0} \hspace{0.2cm} U\_\varphi \hspace{0.2cm} ( \hspace{0.1cm} \ket{0}\bra{0}\_A \otimes \ket{\phi^{+}}\bra{\phi^{+}}\_{{S, E}}^{\otimes n} \hspace{0.1cm} ) \hspace{0.2cm} U\_\varphi^{\dagger} \hspace{0.2cm} \ket{0}\_A  \hspace{0.2cm} \] \hspace{0.2cm} \sim \hspace{0.2cm} \rho\_\theta \hspace{0.1cm} .$$
 
-The normalization factor is the trace of the LHS and equivalent to the success probabilty of measuring $\ket{0}\_A$ in $A$, $p_0 = \text{Tr}\[ e^{- \beta \mathcal{H}\_\theta} \] \hspace{0.1cm} 2^{-n} \hspace{0.1cm} e^{- \beta \frac{1-\delta}{1+\delta} \lVert\theta\rVert\_1} \hspace{0.1cm}.$ The success probabilty can be increased by employing amplitude amplification in system $A$.
+The normalization factor is the trace of the LHS and equivalent to the success probability of measuring $\ket{0}\_A$ in $A$, $p_0 = \text{Tr}\[ e^{- \beta \mathcal{H}\_\theta} \] \hspace{0.1cm} 2^{-n} \hspace{0.1cm} e^{- \beta \frac{1-\delta}{1+\delta} \lVert\theta\rVert\_1} \hspace{0.1cm}$, which can be increased by employing amplitude amplification in system $A$.
 
 
 --------------------------------------------------------
