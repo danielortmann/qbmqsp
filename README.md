@@ -67,7 +67,7 @@ $$ S( \chi \hspace{0.1cm} \Vert \hspace{0.1cm} \rho\_{\theta} ) = \text{Tr}\[ \c
 which is stricly convex[^4] and zero if and only if $\chi = \rho\_{\theta}$. 
 $S$ is usually minimized via gradient descent and the gradient is given by the difference of expectation values of $\frac{\partial \hspace{0.05cm} H\_\theta}{\partial\theta}$ between the target and the model density matrix, which for the above Hamiltonian is given by
 
-$$ \frac{ \partial S( \chi \hspace{0.1cm} \Vert \hspace{0.1cm} \rho\_{\theta})}{\partial\theta\_i} = \beta \hspace{0.1cm} ( \hspace{0.05cm} \langle{ h\_i }\rangle\_{\chi} - \langle{ h\_i }\rangle\_{\rho\_\theta} \hspace{0.05cm} ) \hspace{0.1cm}. $$
+$$ \frac{1}{\beta} \hspace{0.1cm} \frac{ \partial S( \chi \hspace{0.1cm} \Vert \hspace{0.1cm} \rho\_{\theta})}{\partial\theta\_i} = \hspace{0.1cm} \hspace{0.05cm} \langle{ h\_i }\rangle\_{\chi} - \langle{ h\_i }\rangle\_{\rho\_\theta} \hspace{0.05cm} \hspace{0.1cm}. $$
 
 Hence, the training depends on the ability to prepare and measure a QBM. 
 To that end, this project utilizes the framework of QEVT.
@@ -75,26 +75,26 @@ To that end, this project utilizes the framework of QEVT.
 
 ### Preparing a QBM <a name="preparing-a-qbm"></a>
 As a mixed quantum state, the QBM is not prepared directly, but rather a purification of it. 
-Given an $n$-qubit QBM, we define two $n$-qubit registers, the system register $S$ and the environment register $E$, to prepare $\ket{\phi^{+}}\_{{S, E}}^{\otimes n} \hspace{0.1cm},$ where $\ket{\phi^{+}}\_{{S, E}} = \frac{1}{\sqrt{2}} (\ket{00} + \ket{11})$ denotes the maximally entangled state with the first qubit in $S$ and and the second qubit in $E$. 
+Given an $n$-qubit QBM, we define two $n$-qubit registers, the system register $S$ and the environment register $E$, to prepare $\ket{\phi^{+}}\_{{S, E}}^{\otimes n} \hspace{0.1cm},$ where $\ket{\phi^{+}}\_{{S, E}} = (\ket{00} + \ket{11}) / \sqrt{2}$ denotes the maximally entangled state with the first qubit in $S$ and and the second qubit in $E$. 
 We then apply $V\_\theta = e^{- \frac{\beta}{2} \hspace{0.05cm} H\_\theta}$ and perform measurements in $S$ but not in $E$, i.e. we trace out $E$, resulting in a QBM:
 
 $$ \text{Tr}\_{E} \[ \hspace{0.2cm} (V\_\theta \otimes I\_E) \hspace{0.2cm} \ket{\phi^{+}}\bra{\phi^{+}}\_{S,E}^{\otimes n} \hspace{0.2cm} (V\_\theta^{\dagger} \otimes I\_E) \hspace{0.2cm} \] = \rho\_\theta \hspace{0.1cm}. $$
 
-To apply the non-unitary, imaginary-time evolution operator $V\_\theta$ we utilize QEVT. As a first ingredient we perform a unitary block encoding of the Hamiltonian, which requires a third register, the auxiliary register $A$. This project implements the general encoding scheme and the hardware-compatible LCU method. As a second ingredient we need to find the QSP phase factors to realize $e^{- \frac{\beta}{2} x}$ on a quantum computer.
+To apply the non-unitary, imaginary-time evolution operator $V\_\theta$ we utilize QEVT. As a first ingredient we perform a unitary block encoding of the Hamiltonian, which requires a third register, the auxiliary register $A$. This project implements the general encoding scheme and the hardware-compatible LCU method. As a second ingredient we need to find the QSP phase factors to realize $e^{- \frac{\beta}{2} \hspace{0.05cm} x}$ on a quantum computer.
 However, since the QSP theorem only allows for realizing polynomials of definite parity, we compute the QSP phase factors $\varphi$ for a polynomial approximation of the even function $f\_\tau (x) = e^{- \tau \hspace{0.05cm} |x|}$ for some $\tau \in \mathbb{R}$. This is achieved by interfacing with QSPPACK, which finds a polynomial approximation of $f\_\tau$ on an interval $\[\delta, \hspace{0.05cm} 1\]$ for some tunable parameter $\delta \in (0, \hspace{0.05cm} 1)$.
 
 Hence, to realize $V\_\theta$, we have to scale the spectrum of $H\_\theta$ to the interval $\[\delta, \hspace{0.05cm} 1\]$. 
 Since $H\_\theta$ is a linear combination of Pauli string operators, which have eigenvalues $\pm 1$, the operator norm is bounded by $\lVert H\_\theta \rVert \le \lVert\theta\rVert\_1$. Therefore, the preprocessing
 
-$$ H\_\theta^\delta = \frac{ H\_\theta + \lVert\theta\rVert\_1 \mathcal{I} } { 2 \lVert\theta\rVert\_1 } (1-\delta) + \delta \hspace{0.1cm} \mathcal{I} \hspace{0.1cm} $$
+$$ H\_\theta^\delta = \frac{ H\_\theta + \lVert\theta\rVert\_1 \hspace{0.05cm} I } { 2 \lVert\theta\rVert\_1 } (1-\delta) + \delta \hspace{0.1cm} I \hspace{0.1cm}, $$
 
-results in $\text{spec}( H\_\theta^{\delta} ) \subset \[\delta, \hspace{0.05cm} 1\]$. 
+where $I$ denotes the identity operator, results in $\text{spec}( H\_\theta^{\delta} ) \subset \[\delta, \hspace{0.05cm} 1\]$. 
 
 By computing $\varphi$ for $f\_\tau$ with $\tau = \frac{ \hspace{0.1cm} \beta \hspace{0.05cm} \lVert\theta\rVert\_1}{1-\delta}$ and employing QEVT, we are able to implement a unitary $U\_\varphi$ acting on $A$ and $S$ such that
 
-$$ (\bra{0}_A \otimes I\_S) \hspace{0.15cm} U\_\varphi \hspace{0.15cm} (\ket{0}\_A \otimes I\_S) = f\_\tau(H\_{\theta}^{\delta}) = e^{- \tau  \hspace{0.05cm} H\_{\theta}^{\delta}} = V\_\theta \hspace{0.15cm} e^{- \beta \frac{1+\delta}{1-\delta} \lVert\theta\rVert\_1} \hspace{0.1cm}. $$
+$$ (\bra{0}_A \otimes I\_S) \hspace{0.15cm} U\_\varphi \hspace{0.15cm} (\ket{0}\_A \otimes I\_S) = f\_\tau(H\_{\theta}^{\delta}) = e^{- \tau  \hspace{0.05cm} H\_{\theta}^{\delta}} = V\_\theta \hspace{0.15cm} e^{- \beta \hspace{0.05cm}  \frac{1+\delta}{1-\delta} \hspace{0.05cm} \lVert\theta\rVert\_1} \hspace{0.1cm}. $$
 
-Hence, by preparing the state $\ket{0}\_{A} \otimes \ket{\phi^{+}}\_{{S, E}}^{\otimes n}$ , applying $U\_\varphi$ on $A$ and $S$ and measuring $\ket{0}\_A$ in $A$, performing any measurement on system $S$ but not $E$, results in an effective preparation of a QBM:
+Hence, by preparing the state $\ket{0}\_{A} \otimes \ket{\phi^{+}}\_{{S, E}}^{\otimes n}$ , applying $U\_\varphi$ on $A$ and $S$ and measuring $\ket{0}\_A$ in $A$, performing any measurement on system $S$ but not $E$, results in the statistics of a QBM:
 
 $$ \text{Tr}\_{E}\[ \hspace{0.2cm} (\bra{0}_A \otimes I\_S) \hspace{0.2cm} U\_\varphi \hspace{0.2cm} ( \hspace{0.1cm} \ket{0}\bra{0}\_A \otimes \ket{\phi^{+}}\bra{\phi^{+}}\_{{S, E}}^{\otimes n} \hspace{0.1cm} ) \hspace{0.2cm} U\_\varphi^{\dagger} \hspace{0.2cm} (\ket{0}_A \otimes I\_S)  \hspace{0.2cm} \] \hspace{0.2cm} \sim \hspace{0.2cm} \rho\_\theta \hspace{0.1cm} .$$
 
