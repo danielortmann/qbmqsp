@@ -65,7 +65,7 @@ To that end, the QBM is trained by minimizing the quantum relative entropy[^3],
 $$ S( \chi \hspace{0.1cm} \Vert \hspace{0.1cm} \rho\_{\theta} ) = \text{Tr}\[ \chi \hspace{0.1cm} \text{log} \hspace{0.1cm} \chi \] - \text{Tr}\[ \chi \hspace{0.1cm} \hspace{0.05cm} \text{log} \hspace{0.1cm} \rho\_\theta \] \hspace{0.1cm}, $$ 
 
 which is stricly convex[^4] and zero if and only if $\chi = \rho\_{\theta}$. 
-$S$ is usually minimized via gradient descent and the gradient is given by the difference of expectation values of $\frac{\partial \hspace{0.05cm} H\_\theta}{\partial\theta}$ between the target and the model density matrix, which for the above Hamiltonian is given by
+The quantum relative entropy as a function of $\theta$ is usually minimized via gradient descent and the gradient is given by the difference of expectation values of $\frac{\partial \hspace{0.05cm} H\_\theta}{\partial\theta}$ between the target and the model density matrix, which for the above Hamiltonian is given by
 
 $$ \frac{1}{\beta} \hspace{0.1cm} \frac{ \partial S( \chi \hspace{0.1cm} \Vert \hspace{0.1cm} \rho\_{\theta})}{\partial\theta\_i} = \hspace{0.1cm} \hspace{0.05cm} \langle{ h\_i }\rangle\_{\chi} - \langle{ h\_i }\rangle\_{\rho\_\theta} \hspace{0.05cm} \hspace{0.1cm}. $$
 
