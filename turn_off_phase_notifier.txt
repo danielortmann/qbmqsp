@@ -1,0 +1,6 @@
+To disable secondary notifications during phase calculation, 
+comment out the following lines in the respective local Matlab files:
+
+~/MATLAB/qsppack/Solvers/Optimization/cvx_poly_coef.m  :  line 92, 104
+~/MATLAB/qsppack/Solvers/Optimization/QSP_Newton.m     :  line 70, 72-77
+./phaseangles_qbm.m                                    :  line 25-31
